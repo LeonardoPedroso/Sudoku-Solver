@@ -1,13 +1,10 @@
 #include "sudoku.h"
 
 int main(){
-
 	byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH];
 	init_table(table);
-
 	printf("Input table:\n");
 	print_table(table, 0);
-
 	check_posssible_numbers(table);
 	if(fill_sudoku(table))
 		printf("Solution found:\n");
@@ -20,9 +17,7 @@ int main(){
 }
 
 void init_table(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
-
 	byte sample[TABLE_LENGTH][TABLE_HEIGHT] = SUDOKU;
-
 	for (byte j = 0; j < TABLE_HEIGHT; ++j){
 		for (byte i = 0; i < TABLE_LENGTH; ++i){
 			table[i][j][0] = sample[j][i];
@@ -34,9 +29,7 @@ void init_table(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 }
 
 void print_table(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH], byte k){
-
 	for (byte j = 0; j < TABLE_HEIGHT; ++j){
-
 		printf("\n");
 		if(j%3 == 0)
 			printf("\n");
@@ -49,19 +42,15 @@ void print_table(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH], byte k){
 				printf(". ");
 		}
 	}
-
 	printf("\n\n");
 }
 
 void check_posssible_numbers(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
-
 	for (byte i = 0; i < TABLE_LENGTH; ++i){
 		for (byte j = 0; j < TABLE_HEIGHT; ++j){
 			if(table[i][j][0] != 0)
 				continue;
-
 			for(byte k = 1; k< TABLE_DEPTH; ++k){
-
 				byte break_for = FALSE;
 				//linhas
 				for(byte n = 0; n < TABLE_LENGTH; ++n){
@@ -71,9 +60,7 @@ void check_posssible_numbers(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]
 						break;
 					}
 				}
-
 				if(break_for) continue;
-
 				for(byte n = 0; n < TABLE_HEIGHT; ++n){
 					if(table[i][n][0] == k){
 						table[i][j][k] = NOT_POSSIBLE;
@@ -81,10 +68,8 @@ void check_posssible_numbers(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]
 						break;
 					}
 				}
-
 				if(break_for) continue;
 				check_square(table, i, j, k, start_square(i), start_square(j));
-				
 			}
 		}
 	}
@@ -99,9 +84,7 @@ byte start_square(byte x){
 		return 6;
 }
 
-
 void check_square(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH], byte i, byte j, byte k, byte start_square_i, byte start_square_j){
-
 	for(byte n = 0; n<3; n++){
 		for(byte m = 0; m<3; m++){
 			if(table[start_square_i+n][start_square_j+m][0]==k){
@@ -110,27 +93,22 @@ void check_square(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH], byte i, b
 			}
 		}
 	}
-
 	table[i][j][k] = POSSIBLE;
 }
 
 byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 	byte control = reset_possible_numbers(table);
-
 	if(control == FULL)
 		return FULL;
 	else if(control == INVALID)
 		return INVALID;
-
 	check_posssible_numbers(table);
 	byte filled = FALSE;
 	for (byte i = 0; i < TABLE_LENGTH; ++i){
 		for (byte j = 0; j < TABLE_HEIGHT; ++j){
 			byte single_alternative = FALSE;
-
 			if(table[i][j][0] != EMPTY)
 				continue;
-
 			for(byte k = 1; k < TABLE_DEPTH; ++k){
 				if(table[i][j][k] == POSSIBLE && single_alternative == FALSE){
 					single_alternative = k;
@@ -140,20 +118,17 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 					break;
 				}
 			}
-
 			if(single_alternative){
 				filled = TRUE;
 				table[i][j][0] = single_alternative;
 			}
 		}
 	}
-
 	if(filled)
 		return fill_sudoku(table);
 
 	for(byte i = 0; i< TABLE_LENGTH; i++){
 		for(byte k = 1; k < TABLE_DEPTH; k++){
-
 			byte break_for = FALSE;
 			for(byte j = 0; j < TABLE_HEIGHT; j++){
 				if(table[i][j][0] == k){
@@ -163,10 +138,8 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 			}
 			if(break_for)
 				continue;
-
 			//k not in column
 			byte single_alternative = FALSE;
-			
 			for(byte j = 0; j< TABLE_HEIGHT; j++){
 				if(table[i][j][0] != EMPTY)
 					continue;
@@ -177,21 +150,16 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 					break;
 				}
 			}
-
 			if(single_alternative){
 				table[i][single_alternative-1][0] = k;
 				filled = TRUE;
 			}
-
 		}
 	}
-
 	if(filled)
 		return fill_sudoku(table);
-
 	for(byte j = 0; j< TABLE_HEIGHT; j++){
 		for(byte k = 1; k < TABLE_DEPTH; k++){
-
 			byte break_for = FALSE;
 			for(byte i = 0; i < TABLE_LENGTH; i++){
 				if(table[i][j][0] == k){
@@ -199,13 +167,10 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 					break;
 				}
 			}
-
 			if(break_for)
 				continue;
-
 			//k not in column
 			byte single_alternative = FALSE;
-			
 			for(byte i = 0; i< TABLE_LENGTH; i++){
 				if(table[i][j][0] != EMPTY)
 					continue;
@@ -216,22 +181,17 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 					break;
 				}
 			}
-
 			if(single_alternative){
 				table[single_alternative-1][j][0] = k;
 				filled = TRUE;
 			}
-
 		}
 	}
-
 	if(filled)
 		return fill_sudoku(table);
-
 	for(byte start_square_i = 0; start_square_i < 7; start_square_i +=3){
 		for(byte start_square_j = 0; start_square_j < 7; start_square_j += 3){
 			for(byte k = 1; k< TABLE_DEPTH; k++){
-
 				byte break_for = FALSE;
 				for(byte i = 0; i< 3; i++){
 					for(byte j = 0; j<3; j++){
@@ -245,7 +205,6 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 				}
 				if(break_for)
 					break;
-
 				//k not in square
 				byte single_alternative = FALSE;
 				break_for = FALSE;
@@ -264,25 +223,20 @@ byte fill_sudoku(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
 					if(break_for)
 						break;
 				}
-
 				if(single_alternative){
 					table[(single_alternative-1)%TABLE_LENGTH][(single_alternative-1) / TABLE_LENGTH][0] = k;
 					filled = TRUE;
 				}
-
 			}
 		}
 	}
-
 	if(filled)
 		return fill_sudoku(table);
 	else
 		return clone_sudoku(table);
 }
 
-
 byte reset_possible_numbers(byte table[TABLE_LENGTH][TABLE_HEIGHT][TABLE_DEPTH]){
-
 	if(!check_sudoku_validity(table))
 		return INVALID;
 
